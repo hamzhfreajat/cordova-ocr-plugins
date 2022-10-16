@@ -27,14 +27,22 @@ public class CardIOCordovaPlugin extends CordovaPlugin {
     private static final int REQUEST_CARD_SCAN = 10;
 
     @Override
-    public String execute(String action, JSONArray args,
+    public boolean execute(String action, JSONArray args,
                            CallbackContext callbackContext) throws JSONException {
         this.callbackContext = callbackContext;
         this.activity = this.cordova.getActivity();
-        String base64 = this.scan(args);
+        boolean retValue = true;
+        if (action.equals("scan")) {
+            this.scan(args);
+        } else if (action.equals("canScan")) {
+            this.canScan(args);
+        } else if (action.equals("version")) {
+            this.callbackContext.success(CardIOActivity.sdkVersion());
+        } else {
+            retValue = false;
+        }
 
-
-        return base64;
+        return retValue;
     }
 
     @Override
@@ -46,26 +54,27 @@ public class CardIOCordovaPlugin extends CordovaPlugin {
         this.callbackContext.success();
     }
 
-    private String scan(JSONArray args) throws JSONException {
+    private void scan(JSONArray args) throws JSONException {
         Intent scanIntent = new Intent(this.activity, CardIOActivity.class);
         JSONObject configurations = args.getJSONObject(0);
         // customize these values to suit your needs.
-        scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_EXPIRY, true); // default: false
-               scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_CVV, true); // default: false
-               scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_POSTAL_CODE, true); // default: false
-               scanIntent.putExtra(CardIOActivity.EXTRA_RESTRICT_POSTAL_CODE_TO_NUMERIC_ONLY, false); // default: false
-               scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_CARDHOLDER_NAME, false); // default: false
-               scanIntent.putExtra(CardIOActivity.EXTRA_USE_CARDIO_LOGO, false);
-               scanIntent.putExtra(CardIOActivity.EXTRA_CAPTURED_CARD_IMAGE, true);
-               scanIntent.putExtra(CardIOActivity.EXTRA_USE_PAYPAL_ACTIONBAR_ICON, false);
-               scanIntent.putExtra(CardIOActivity.EXTRA_HIDE_CARDIO_LOGO, true);
-               scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_CONFIRMATION, true);
-               scanIntent.putExtra(CardIOActivity.EXTRA_SCAN_EXPIRY, true); //
-               scanIntent.putExtra(CardIOActivity.EXTRA_RETURN_CARD_IMAGE, true);
-               scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_MANUAL_ENTRY, false);
-               scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_SCAN, true);
-               scanIntent.putExtra(CardIOActivity.EXTRA_SCAN_RESULT, true);
-        return this.cordova.startActivityForResult(this, scanIntent, REQUEST_CARD_SCAN);
+             scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_EXPIRY, true); // default: false
+             scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_CVV, true); // default: false
+             scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_POSTAL_CODE, true); // default: false
+             scanIntent.putExtra(CardIOActivity.EXTRA_RESTRICT_POSTAL_CODE_TO_NUMERIC_ONLY, false); // default: false
+             scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_CARDHOLDER_NAME, false); // default: false
+             scanIntent.putExtra(CardIOActivity.EXTRA_USE_CARDIO_LOGO, false);
+             scanIntent.putExtra(CardIOActivity.EXTRA_CAPTURED_CARD_IMAGE, true);
+             scanIntent.putExtra(CardIOActivity.EXTRA_USE_PAYPAL_ACTIONBAR_ICON, false);
+             scanIntent.putExtra(CardIOActivity.EXTRA_HIDE_CARDIO_LOGO, true);
+             scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_CONFIRMATION, true);
+             scanIntent.putExtra(CardIOActivity.EXTRA_SCAN_EXPIRY, true); //
+             scanIntent.putExtra(CardIOActivity.EXTRA_RETURN_CARD_IMAGE, true);
+             scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_MANUAL_ENTRY, false);
+             scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_SCAN, true);
+             scanIntent.putExtra(CardIOActivity.EXTRA_SCAN_RESULT, true);
+
+        this.cordova.startActivityForResult(this, scanIntent, REQUEST_CARD_SCAN);
     }
 
     private void canScan(JSONArray args) throws JSONException {
@@ -78,27 +87,23 @@ public class CardIOCordovaPlugin extends CordovaPlugin {
     }
 
     // onActivityResult
-    public String onActivityResult(int requestCode, int resultCode, Intent intent) {
-    Bitmap bitmap = CardIOActivity.getCapturedCardImage(data);
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-            byte[] byteArray = byteArrayOutputStream.toByteArray();
-            String encoded = Base64.encodeToString(byteArray, Base64.NO_WRAP);
-            Log.i("base64", encoded);
-            return encoded;
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+
+        if (REQUEST_CARD_SCAN == requestCode) {
+           Intent origIntent = getIntent();
+           Bitmap bitmap = CardIOActivity.getCapturedCardImage(data);
+           ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+           bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+           byte[] byteArray = byteArrayOutputStream.toByteArray();
+           String encoded = Base64.encodeToString(byteArray, Base64.NO_WRAP);
+           this.callbackContext.success(this.toJSONObject(scanResult));
+        }
     }
 
-    private JSONObject toJSONObject(CreditCard card) {
+    private JSONObject toJSONObject(String encoded) {
         JSONObject scanCard = new JSONObject();
         try {
-            scanCard.put("cardType", card.getCardType());
-            scanCard.put("redactedCardNumber", card.getRedactedCardNumber());
-            scanCard.put("cardNumber", card.cardNumber);
-            scanCard.put("expiryMonth", card.expiryMonth);
-            scanCard.put("expiryYear", card.expiryYear);
-            scanCard.put("cvv", card.cvv);
-            scanCard.put("postalCode", card.postalCode);
-            scanCard.put("cardholderName", card.cardholderName);
+            scanCard.put("image64", encoded);
         } catch (JSONException e) {
             scanCard = null;
         }

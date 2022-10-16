@@ -1,7 +1,32 @@
 {
-  "name": "card.io.cordova.mobilesdk",
-  "version": "2.1.0",
-  "description": "This plugin allows to add card.io scanning capabilities to your application using card.io SDK Native library",
+  "_from": "git+https://github.com/card-io/card.io-Cordova-Plugin.git",
+  "_id": "card.io.cordova.mobilesdk@2.1.0",
+  "_inBundle": false,
+  "_integrity": "",
+  "_location": "/card.io.cordova.mobilesdk",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "git",
+    "raw": "https://github.com/card-io/card.io-Cordova-Plugin",
+    "rawSpec": "https://github.com/card-io/card.io-Cordova-Plugin",
+    "saveSpec": "git+https://github.com/card-io/card.io-Cordova-Plugin.git",
+    "fetchSpec": "https://github.com/card-io/card.io-Cordova-Plugin.git",
+    "gitCommittish": null
+  },
+  "_requiredBy": [
+    "#DEV:/",
+    "#USER"
+  ],
+  "_resolved": "git+https://github.com/card-io/card.io-Cordova-Plugin.git#95011ec636930cba27eb24e2880a0a3e803690fa",
+  "_spec": "https://github.com/card-io/card.io-Cordova-Plugin",
+  "_where": "C:\\Users\\hfraijat\\Desktop\\aman\\test ocr app\\trunk\\amanApp",
+  "author": {
+    "name": "card.io"
+  },
+  "bugs": {
+    "url": "https://github.com/card-io/card.io-Cordova-Plugin/issues"
+  },
+  "bundleDependencies": false,
   "cordova": {
     "id": "card.io.cordova.mobilesdk",
     "platforms": [
@@ -9,10 +34,15 @@
       "android"
     ]
   },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/card-io/card.io-Cordova-Plugin.git"
-  },
+  "deprecated": false,
+  "description": "This plugin allows to add card.io scanning capabilities to your application using card.io SDK Native library",
+  "engines": [
+    {
+      "name": "cordova",
+      "version": ">=3.0.0"
+    }
+  ],
+  "homepage": "https://github.com/card-io/card.io-Cordova-Plugin#readme",
   "keywords": [
     "card.io",
     "sdk",
@@ -21,16 +51,11 @@
     "cordova-ios",
     "cordova-android"
   ],
-  "engines": [
-    {
-      "name": "cordova",
-      "version": ">=3.0.0"
-    }
-  ],
-  "author": "card.io",
   "license": "MIT License, see LICENSE for details",
-  "bugs": {
-    "url": "https://github.com/card-io/card.io-Cordova-Plugin/issues"
+  "name": "card.io.cordova.mobilesdk",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/card-io/card.io-Cordova-Plugin.git"
   },
-  "homepage": "https://github.com/card-io/card.io-Cordova-Plugin#readme"
+  "version": "2.1.0"
 }
