@@ -97,8 +97,7 @@ public class CardIOCordovaPlugin extends CordovaPlugin {
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 
         if (REQUEST_CARD_SCAN == requestCode) {
-           Intent origIntent = getIntent();
-           Bitmap bitmap = CardIOActivity.getCapturedCardImage(data);
+           Bitmap bitmap = CardIOActivity.getCapturedCardImage(intent);
            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
            byte[] byteArray = byteArrayOutputStream.toByteArray();
