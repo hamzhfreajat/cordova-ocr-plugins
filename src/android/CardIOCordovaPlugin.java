@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.io.ByteArrayOutputStream;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -16,6 +17,12 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.os.Bundle;
+import android.util.Base64;
+import android.util.Log;
+import android.view.View;
 
 import io.card.payment.CardIOActivity;
 import io.card.payment.CreditCard;
