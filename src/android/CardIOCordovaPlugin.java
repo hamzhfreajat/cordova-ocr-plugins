@@ -102,7 +102,7 @@ public class CardIOCordovaPlugin extends CordovaPlugin {
            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
            byte[] byteArray = byteArrayOutputStream.toByteArray();
            String encoded = Base64.encodeToString(byteArray, Base64.NO_WRAP);
-           this.callbackContext.success(this.toJSONObject(scanResult));
+           this.callbackContext.success(this.toJSONObject(encoded));
         }
     }
 
