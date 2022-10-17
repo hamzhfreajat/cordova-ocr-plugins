@@ -77,7 +77,7 @@ public class CardIOCordovaPlugin extends CordovaPlugin {
              scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_CONFIRMATION, true);
              scanIntent.putExtra(CardIOActivity.EXTRA_SCAN_EXPIRY, true); //
              scanIntent.putExtra(CardIOActivity.EXTRA_RETURN_CARD_IMAGE, true);
-             scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_MANUAL_ENTRY, false);
+             scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_MANUAL_ENTRY, true);
              scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_SCAN, true);
              scanIntent.putExtra(CardIOActivity.EXTRA_SCAN_RESULT, true);
 
