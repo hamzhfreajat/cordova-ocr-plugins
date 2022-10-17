@@ -97,12 +97,18 @@ public class CardIOCordovaPlugin extends CordovaPlugin {
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 
         if (REQUEST_CARD_SCAN == requestCode) {
+
            Bitmap bitmap = CardIOActivity.getCapturedCardImage(intent);
-           ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-           bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-           byte[] byteArray = byteArrayOutputStream.toByteArray();
-           String encoded = Base64.encodeToString(byteArray, Base64.NO_WRAP);
-           this.callbackContext.success(this.toJSONObject(encoded));
+           if(bitmap != null){
+                      ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                      bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+                      byte[] byteArray = byteArrayOutputStream.toByteArray();
+                      String encoded = Base64.encodeToString(byteArray, Base64.NO_WRAP);
+                      this.callbackContext.success(this.toJSONObject(encoded));
+           }else{
+                this.callbackContext.error("Message is not found");
+           }
+
         }
     }
 
