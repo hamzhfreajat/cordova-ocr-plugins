@@ -1,25 +1,28 @@
 {
-  "_from": "git+https://github.com/card-io/card.io-Cordova-Plugin.git",
+  "_from": "card.io.cordova.mobilesdk",
   "_id": "card.io.cordova.mobilesdk@2.1.0",
   "_inBundle": false,
-  "_integrity": "",
+  "_integrity": "sha512-mjImf1/tqZEDIQUBxS0LoDGGIMpv7Plod9ICTIMUbhXaxYFkbhQFNYGLpYoDZETSlz1sA6aXAm734xTT4KlLaw==",
   "_location": "/card.io.cordova.mobilesdk",
   "_phantomChildren": {},
   "_requested": {
-    "type": "git",
-    "raw": "https://github.com/card-io/card.io-Cordova-Plugin",
-    "rawSpec": "https://github.com/card-io/card.io-Cordova-Plugin",
-    "saveSpec": "git+https://github.com/card-io/card.io-Cordova-Plugin.git",
-    "fetchSpec": "https://github.com/card-io/card.io-Cordova-Plugin.git",
-    "gitCommittish": null
+    "type": "tag",
+    "registry": true,
+    "raw": "card.io.cordova.mobilesdk",
+    "name": "card.io.cordova.mobilesdk",
+    "escapedName": "card.io.cordova.mobilesdk",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
   },
   "_requiredBy": [
-    "#DEV:/",
-    "#USER"
+    "#USER",
+    "/"
   ],
-  "_resolved": "git+https://github.com/card-io/card.io-Cordova-Plugin.git#95011ec636930cba27eb24e2880a0a3e803690fa",
-  "_spec": "https://github.com/card-io/card.io-Cordova-Plugin",
-  "_where": "C:\\Users\\hfraijat\\Desktop\\aman\\test ocr app\\trunk\\amanApp",
+  "_resolved": "https://registry.npmjs.org/card.io.cordova.mobilesdk/-/card.io.cordova.mobilesdk-2.1.0.tgz",
+  "_shasum": "583b9306f6f28ab54cd9d2c89fc35ed93e851488",
+  "_spec": "card.io.cordova.mobilesdk",
+  "_where": "/Users/optimizaoptimiza/Desktop/AmanPortalWithOCR.nosync/amanAppOCR",
   "author": {
     "name": "card.io"
   },

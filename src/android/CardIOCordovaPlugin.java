@@ -6,7 +6,6 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.io.ByteArrayOutputStream;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -17,12 +16,6 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.os.Bundle;
-import android.util.Base64;
-import android.util.Log;
-import android.view.View;
 
 import io.card.payment.CardIOActivity;
 import io.card.payment.CreditCard;
@@ -65,22 +58,22 @@ public class CardIOCordovaPlugin extends CordovaPlugin {
         Intent scanIntent = new Intent(this.activity, CardIOActivity.class);
         JSONObject configurations = args.getJSONObject(0);
         // customize these values to suit your needs.
-             scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_EXPIRY, true); // default: false
-             scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_CVV, true); // default: false
-             scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_POSTAL_CODE, true); // default: false
-             scanIntent.putExtra(CardIOActivity.EXTRA_RESTRICT_POSTAL_CODE_TO_NUMERIC_ONLY, false); // default: false
-             scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_CARDHOLDER_NAME, false); // default: false
-             scanIntent.putExtra(CardIOActivity.EXTRA_USE_CARDIO_LOGO, false);
-             scanIntent.putExtra(CardIOActivity.EXTRA_CAPTURED_CARD_IMAGE, true);
-             scanIntent.putExtra(CardIOActivity.EXTRA_USE_PAYPAL_ACTIONBAR_ICON, false);
-             scanIntent.putExtra(CardIOActivity.EXTRA_HIDE_CARDIO_LOGO, true);
-             scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_CONFIRMATION, true);
-             scanIntent.putExtra(CardIOActivity.EXTRA_SCAN_EXPIRY, true); //
-             scanIntent.putExtra(CardIOActivity.EXTRA_RETURN_CARD_IMAGE, true);
-             scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_MANUAL_ENTRY, true);
-             scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_SCAN, true);
-             scanIntent.putExtra(CardIOActivity.EXTRA_SCAN_RESULT, true);
-
+        scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_EXPIRY, this.getConfiguration(configurations, "requireExpiry", false)); // default: false
+        scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_CVV, this.getConfiguration(configurations, "requireCVV", false)); // default: false
+        scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_POSTAL_CODE, this.getConfiguration(configurations, "requirePostalCode", false)); // default: false
+        scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_MANUAL_ENTRY, this.getConfiguration(configurations, "suppressManual", false)); // default: false
+        scanIntent.putExtra(CardIOActivity.EXTRA_RESTRICT_POSTAL_CODE_TO_NUMERIC_ONLY, this.getConfiguration(configurations, "restrictPostalCodeToNumericOnly", false)); // default: false
+        scanIntent.putExtra(CardIOActivity.EXTRA_KEEP_APPLICATION_THEME, this.getConfiguration(configurations, "keepApplicationTheme", false)); // default: false
+        scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_CARDHOLDER_NAME, this.getConfiguration(configurations, "requireCardholderName", false)); // default: false
+        scanIntent.putExtra(CardIOActivity.EXTRA_USE_CARDIO_LOGO, this.getConfiguration(configurations, "useCardIOLogo", false)); // default: false
+        scanIntent.putExtra(CardIOActivity.EXTRA_SCAN_INSTRUCTIONS, this.getConfiguration(configurations, "scanInstructions", false)); // default: false
+        scanIntent.putExtra(CardIOActivity.EXTRA_NO_CAMERA, this.getConfiguration(configurations, "noCamera", false)); // default: false
+        scanIntent.putExtra(CardIOActivity.EXTRA_SCAN_EXPIRY, this.getConfiguration(configurations, "scanExpiry", false)); // default: false
+        scanIntent.putExtra(CardIOActivity.EXTRA_LANGUAGE_OR_LOCALE, this.getConfiguration(configurations, "languageOrLocale", false)); // default: false
+        scanIntent.putExtra(CardIOActivity.EXTRA_GUIDE_COLOR, this.getConfiguration(configurations, "guideColor", false)); // default: false
+        scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_CONFIRMATION, this.getConfiguration(configurations, "suppressConfirmation", false)); // default: false
+        scanIntent.putExtra(CardIOActivity.EXTRA_HIDE_CARDIO_LOGO, this.getConfiguration(configurations, "hideCardIOLogo", false)); // default: false
+        scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_SCAN, this.getConfiguration(configurations, "suppressScan", false)); // default: false
         this.cordova.startActivityForResult(this, scanIntent, REQUEST_CARD_SCAN);
     }
 
@@ -95,27 +88,36 @@ public class CardIOCordovaPlugin extends CordovaPlugin {
 
     // onActivityResult
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-
         if (REQUEST_CARD_SCAN == requestCode) {
-
-           Bitmap bitmap = CardIOActivity.getCapturedCardImage(intent);
-           if(bitmap != null){
-                      ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                      bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-                      byte[] byteArray = byteArrayOutputStream.toByteArray();
-                      String encoded = Base64.encodeToString(byteArray, Base64.NO_WRAP);
-                      this.callbackContext.success(this.toJSONObject(encoded));
-           }else{
-                this.callbackContext.error("Message is not found");
-           }
-
+            if (resultCode == CardIOActivity.RESULT_CARD_INFO) {
+                CreditCard scanResult = null;
+                if (intent.hasExtra(CardIOActivity.EXTRA_SCAN_RESULT)) {
+                    scanResult = intent
+                            .getParcelableExtra(CardIOActivity.EXTRA_SCAN_RESULT);
+                    this.callbackContext.success(this.toJSONObject(scanResult));
+                } else {
+                    this.callbackContext
+                            .error("card was scanned but no result");
+                }
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                this.callbackContext.error("card scan cancelled");
+            } else {
+                this.callbackContext.error(resultCode);
+            }
         }
     }
 
-    private JSONObject toJSONObject(String encoded) {
+    private JSONObject toJSONObject(CreditCard card) {
         JSONObject scanCard = new JSONObject();
         try {
-            scanCard.put("image64", encoded);
+            scanCard.put("cardType", card.getCardType());
+            scanCard.put("redactedCardNumber", card.getRedactedCardNumber());
+            scanCard.put("cardNumber", card.cardNumber);
+            scanCard.put("expiryMonth", card.expiryMonth);
+            scanCard.put("expiryYear", card.expiryYear);
+            scanCard.put("cvv", card.cvv);
+            scanCard.put("postalCode", card.postalCode);
+            scanCard.put("cardholderName", card.cardholderName);
         } catch (JSONException e) {
             scanCard = null;
         }

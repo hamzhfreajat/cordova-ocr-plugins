@@ -35,16 +35,20 @@
     BOOL isScanningEnabled = (noCamera != nil) ? ![noCamera boolValue] : true;
 
     CardIOPaymentViewController *paymentViewController = [[CardIOPaymentViewController alloc] initWithPaymentDelegate:self scanningEnabled:isScanningEnabled];
+    
+    paymentViewController.detectionMode = CardIODetectionModeCardImageOnly;
 
     NSNumber *collectCVV = [options objectForKey:@"requireCVV"];
     if (collectCVV) {
-        paymentViewController.collectCVV = [collectCVV boolValue];
+        paymentViewController.collectCVV = NO;
     }
 
     NSNumber *collectZip = [options objectForKey:@"requirePostalCode"];
     if (collectZip) {
         paymentViewController.collectPostalCode = [collectZip boolValue];
     }
+    
+    paymentViewController.suppressScannedCardImage = YES;
 
     NSNumber *collectExpiry = [options objectForKey:@"requireExpiry"];
     if (collectExpiry) {
@@ -133,6 +137,7 @@
       NSMutableDictionary *response = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                                        info.cardNumber, @"cardNumber",
                                        info.redactedCardNumber, @"redactedCardNumber",
+                                       info.cardImage,@"image64",
                                        [CardIOCreditCardInfo displayStringForCardType:info.cardType
                                                                 usingLanguageOrLocale:pvc.languageOrLocale],
                                        @"cardType",
@@ -150,10 +155,20 @@
       if(info.cardholderName.length > 0) {
         [response setObject:info.cardholderName forKey:@"cardholderName"];
       }
+        if(info.cardImage != nil) {
+          NSString *myString = [self encodeToBase64String:(UIImage *)info.cardImage];
+          [response setObject:myString forKey:@"image64"];
+        }
+     
 
       [self sendSuccessTo:self.scanCallbackId withObject:response];
     }];
 }
+
+- (NSString *)encodeToBase64String:(UIImage *)image {
+ return [UIImagePNGRepresentation(image) base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithCarriageReturn];
+}
+	
 
 - (void)userDidCancelPaymentViewController:(CardIOPaymentViewController *)pvc {
 
